@@ -48,6 +48,29 @@ class Address extends Component{
         });
     }
 
+    getFireData2(){
+        if(this.props.email == undefined || 
+            this.props.email == ''){return;}
+        let email = Lib.encodeEmail(this.props.email);
+        let db = firebase.database();
+        let ref = db.ref('address/');
+        let self = this;
+        ref.orderByKey().equalTo(email)
+        .on('value', (snapshot) =>{
+            let d = Lib.deepcopy(snapshot.val());
+            this.props.dispatch({
+                type:'UPDATE_USER',
+                value:{
+                    login:this.props.login,
+                    username:this.props.username,
+                    email:this.props.email,
+                    data:d,
+                    items:self.getItem(d)
+                }
+            });
+        });
+    }
+
     // dataを元に表示項目を作成
     getItem(data){
         if(data == undefined){return;}
